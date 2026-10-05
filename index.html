@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 城北中学 本気の自習室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background: repeating-linear-gradient(
+        90deg,
+        #ffffff 0px,
+        #ffffff 18px,
+        #f3f3f3 18px,
+        #f3f3f3 20px
+    );
+    margin: 15px;
+    color: #222;
+}
+
+h1 {
+    text-align: center;
+    color: #111;
+    border-bottom: 4px solid #111;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.card,
+.reward-card,
+.todo-card,
+.history,
+.summary-view {
+    background: white;
+    border: 2px solid #111;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 4px 4px 0px #111;
+    margin-bottom: 15px;
+}
+
+.reward-card {
+    background: #fffdf0;
+    border-color: #d4a017;
+    box-shadow: 4px 4px 0px #d4a017;
+}
+
+.todo-card {
+    background: #f0f7ff;
+    border-color: #0056b3;
+    box-shadow: 4px 4px 0px #0056b3;
+}
+
+.card-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.reward-title { color: #8a6d3b; }
+.todo-title { color: #0056b3; }
+
+.reward-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.reward-stat-box .num {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #111;
+}
+
+input, select {
+    width: 100%;
+    height: 44px;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background: #111;
+    color: white;
+    padding: 8px;
+}
+
+td {
+    border: 1px solid #ccc;
+    padding: 4px;
+}
+
+.time {
+    background: #f5f5f5;
+    font-weight: bold;
+    width: 80px;
+    text-align: center;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+button {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 999px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95em;
+}
+
+.line { background: #06C755; }
+.save { background: #111; }
+.pay { background: #d4a017; color: #fff; }
+.copy { background: #444; }
+.view { background: #222; }
+.print { background: #000; }
+.reset { background: #666; }
+.clear { background: #a00000; }
+
+.todo-item {
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.todo-item.resolved {
+    background: #eef9f2;
+    border-color: #28a745;
+}
+
+.todo-text {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.todo-meta {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: bold;
+}
+
+.todo-content {
+    font-size: 0.95em;
+    margin-top: 2px;
+}
+
+.todo-status-btn {
+    width: auto;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+}
+
+.btn-unresolved {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-resolved {
+    background: #28a745;
+    color: white;
+}
+
+.history-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item:hover {
+    background: #f5f5f5;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.history-date {
+    font-weight: bold;
+}
+
+.history-meta {
+    font-size: 0.75em;
+    color: #666;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.status-unpaid {
+    background: #ffe6e6;
+    color: #c00;
+    border: 1px solid #c00;
+}
+
+.status-paid {
+    background: #e6ffe6;
+    color: #080;
+    border: 1px solid #080;
+}
+
+.summary-view {
+    display: none;
+}
+
+.summary-view h2 {
+    color: #111;
+    border-bottom: 3px solid #111;
+    padding-bottom: 8px;
+}
+
+details {
+    background: white;
+    border: 2px solid #111;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 3px 3px 0px #111;
+}
+
+summary {
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.top-info {
+    display: flex;
+    gap: 10px;
+}
+
+.top-info > div {
+    flex: 1;
+}
+
+@media print {
+    .card, .reward-card, .todo-card, .history, button, details {
+        display: none !important;
+    }
+    .summary-view {
+        display: block !important;
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    body { background: white; margin: 10mm; }
+    h1 { display: none; }
+}
+
+@media (max-width:600px) {
+    .top-info { flex-direction: column; }
+    .top-info > div { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>
+📖 城北中学 📖<br>
+本気の自習室
+</h1>
+
+<!-- 報酬金額カード -->
+<div class="reward-card">
+    <div class="card-title reward-title">💰 お小遣い・ご褒美管理 (30分達成 = 50円)</div>
+    <div class="reward-stats">
+        <div class="reward-stat-box">
+            <div style="font-size: 0.8em; color: #555;">未払い額</div>
+            <div class="num" id="unpaidAmount">0 円</div>
+        </div>
+        <div class="reward-stat-box">
+            <div style="font-size: 0.8em; color: #555;">累計獲得額</div>
+            <div class="num" id="totalAmount">0 円</div>
+        </div>
+    </div>
+    <button class="pay" onclick="markAllAsPaid()">💵 未払い分を精算（支払い済にする）</button>
+</div>
+
+<!-- TODOコーナー（質問・疑問一覧管理） -->
+<div class="todo-card">
+    <div class="card-title todo-title">❓ 質問・疑問解消 TODOコーナー</div>
+    <div id="todoList"></div>
+</div>
+
+<!-- 基本入力カード -->
+<div class="card">
+    <div class="top-info">
+        <div>
+            自習日<br>
+            <input type="date" id="studyDate">
+        </div>
+        <div>
+            本日の目標・場所<br>
+            <input type="text" id="target" placeholder="例: 自習室 / 過去問演習">
+        </div>
+    </div>
+
+    <div class="button-grid">
+        <button class="save" onclick="saveStudy()">💾 記録を保存</button>
+        <button class="line" onclick="copyLineMenu()">📋 LINE用コピー</button>
+        <button class="view" onclick="showSummaryView()">👁 一覧プレビュー</button>
+        <button class="print" onclick="printSummaryView()">🖨 印刷</button>
+        <button class="copy" onclick="copyLatest()">⧉ 前回をコピー</button>
+        <button class="reset" onclick="clearForm()">✖ クリア</button>
+        <button class="clear" style="grid-column: span 2;" onclick="clearHistory()">🗑 全履歴削除</button>
+    </div>
+</div>
+
+<!-- プレビュー表示エリア -->
+<div class="summary-view" id="summaryView">
+    <h2>📖 自習計画・実績一覧</h2>
+    <div id="summaryContent"></div>
+</div>
+
+<!-- スケジュール入力表 -->
+<details open>
+    <summary>⏱ 12:00 ～ 20:00 (30分刻み)</summary>
+    <table id="scheduleTable">
+        <thead>
+            <tr>
+                <th>時間</th>
+                <th>学習内容（フリー入力）</th>
+                <th>疑問点・質問メモ</th>
+            </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+    </table>
+</details>
+
+<!-- 履歴表示エリア -->
+<div class="history">
+    <h2>📚 過去の自習記録</h2>
+    <div id="historyList"></div>
+</div>
+
+<script>
+// 改ざん防止用簡易ハッシュ関数
+function generateHash(dataStr) {
+    let hash = 0;
+    for (let i = 0; i < dataStr.length; i++) {
+        const char = dataStr.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0;
+    }
+    return 'SEC-' + Math.abs(hash).toString(16);
+}
+
+// テーブル生成 (12:00～20:00, 30分刻み)
+function createTable() {
+    const tbody = document.getElementById('scheduleBody');
+    tbody.innerHTML = '';
+    
+    let h = 12;
+    let m = 0;
+
+    while (h < 20 || (h === 20 && m === 0)) {
+        const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td class="time">${timeStr}</td>
+            <td><input class="subject" type="text" placeholder="例: 算数 過去問 2023"></td>
+            <td><input class="memo" type="text" placeholder="例: 大問3(2)の解き方が分からない"></td>
+        `;
+        tbody.appendChild(row);
+
+        m += 30;
+        if (m === 60) {
+            m = 0;
+            h++;
+        }
+    }
+}
+
+createTable();
+
+// 初期日付を本日に設定
+document.getElementById('studyDate').value = new Date().toISOString().split('T')[0];
+
+function getRows() {
+    return Array.from(document.querySelectorAll('#scheduleBody tr'));
+}
+
+// 記録があるコマ数をカウント
+function countValidSlots(schedule) {
+    return schedule.filter(s => s.subject.trim() !== '' || s.memo.trim() !== '').length;
+}
+
+// 保存処理
+function saveStudy() {
+    const studyDate = document.getElementById('studyDate').value;
+    const target = document.getElementById('target').value;
+
+    if (!studyDate) {
+        alert('日付を選択してください');
+        return;
+    }
+
+    const rows = getRows();
+    const schedule = rows.map(r => ({
+        time: r.querySelector('.time').innerText,
+        subject: r.querySelector('.subject').value,
+        memo: r.querySelector('.memo').value
+    }));
+
+    const validSlots = countValidSlots(schedule);
+    if (validSlots === 0) {
+        alert('学習内容が入力されていません');
+        return;
+    }
+
+    let data = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    const existingIndex = data.findIndex(item => item.date === studyDate);
+    const now = new Date();
+    const timestamp = now.toLocaleString('ja-JP');
+    
+    // 既存の解消状態マップを引き継ぐ
+    const existingResolvedMap = {};
+    if (existingIndex !== -1 && data[existingIndex].resolvedMap) {
+        Object.assign(existingResolvedMap, data[existingIndex].resolvedMap);
+    }
+
+    const payloadStr = `${studyDate}_${timestamp}_${JSON.stringify(schedule)}`;
+    const hash = generateHash(payloadStr);
+
+    const record = {
+        date: studyDate,
+        target: target,
+        schedule: schedule,
+        slots: validSlots,
+        reward: validSlots * 50,
+        updatedAt: timestamp,
+        hash: hash,
+        isPaid: existingIndex !== -1 ? data[existingIndex].isPaid : false,
+        resolvedMap: existingResolvedMap
+    };
+
+    if (existingIndex !== -1) {
+        if (!confirm('本日の記録がすでに存在します。上書き更新しますか？')) {
+            return;
+        }
+        data[existingIndex] = record;
+    } else {
+        data.push(record);
+    }
+
+    localStorage.setItem('johokuStudyData', JSON.stringify(data));
+    loadHistory();
+    renderTodoList();
+    updateRewardStats();
+    alert(`記録を保存しました！\n獲得額: ${validSlots * 50}円 (${validSlots}コマ × 50円)\n登録日時: ${timestamp}`);
+}
+
+// TODO（疑問一覧）のレンダリング
+function renderTodoList() {
+    const data = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    const todoList = document.getElementById('todoList');
+    todoList.innerHTML = '';
+
+    let totalQuestions = 0;
+
+    data.slice().reverse().forEach(record => {
+        const resolvedMap = record.resolvedMap || {};
+
+        record.schedule.forEach(s => {
+            if (s.memo && s.memo.trim() !== '') {
+                totalQuestions++;
+                const questionKey = `${record.date}_${s.time}`;
+                const isResolved = !!resolvedMap[questionKey];
+
+                const item = document.createElement('div');
+                item.className = `todo-item ${isResolved ? 'resolved' : ''}`;
+                
+                item.innerHTML = `
+                    <div class="todo-text">
+                        <div class="todo-meta">📅 ${record.date} ${s.time} 【${s.subject || '学習'}】</div>
+                        <div class="todo-content">❓ ${s.memo}</div>
+                    </div>
+                    <button class="todo-status-btn ${isResolved ? 'btn-resolved' : 'btn-unresolved'}" 
+                        onclick="toggleQuestionStatus('${record.date}', '${questionKey}')">
+                        ${isResolved ? '解散済み！' : '未解消（質問する）'}
+                    </button>
+                `;
+                todoList.appendChild(item);
+            }
+        });
+    });
+
+    if (totalQuestions === 0) {
+        todoList.innerHTML = '<div style="text-align:center; color:#777; padding:10px;">登録された疑問点・質問はありません ✏️</div>';
+    }
+}
+
+// 疑問の解消状態のトグル切り替え
+function toggleQuestionStatus(recordDate, questionKey) {
+    let data = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    const record = data.find(x => x.date === recordDate);
+
+    if (record) {
+        if (!record.resolvedMap) record.resolvedMap = {};
+        record.resolvedMap[questionKey] = !record.resolvedMap[questionKey];
+        localStorage.setItem('johokuStudyData', JSON.stringify(data));
+        renderTodoList();
+    }
+}
+
+// 履歴読み込み
+function loadHistory() {
+    const data = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    const historyList = document.getElementById('historyList');
+    historyList.innerHTML = '';
+
+    data.slice().reverse().forEach(x => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        
+        const slotsCount = x.slots || countValidSlots(x.schedule);
+        const dayReward = x.reward || (slotsCount * 50);
+
+        const statusBadge = x.isPaid 
+            ? `<span class="status-badge status-paid">精算済</span>`
+            : `<span class="status-badge status-unpaid">未精算 (+${dayReward}円)</span>`;
+
+        item.innerHTML = `
+            <div class="history-info">
+                <span class="history-date">📖 ${x.date} ${x.target ? '（' + x.target + '）' : ''}</span>
+                <span class="history-meta">${slotsCount}コマ (${dayReward}円) | 最終更新: ${x.updatedAt} | ID: ${x.hash}</span>
+            </div>
+            <div>${statusBadge}</div>
+        `;
+
+        item.onclick = () => loadStudy(x);
+        historyList.appendChild(item);
+    });
+
+    updateRewardStats();
+}
+
+// 指定レコードの読み込み
+function loadStudy(x) {
+    document.getElementById('studyDate').value = x.date;
+    document.getElementById('target').value = x.target || '';
+
+    const rows = getRows();
+    x.schedule.forEach((s, i) => {
+        if (!rows[i]) return;
+        rows[i].querySelector('.subject').value = s.subject || '';
+        rows[i].querySelector('.memo').value = s.memo || '';
+    });
+}
+
+// 報酬の計算・更新
+function updateRewardStats() {
+    const data = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    let total = 0;
+    let unpaid = 0;
+
+    data.forEach(x => {
+        const slots = x.slots || countValidSlots(x.schedule);
+        const reward = x.reward || (slots * 50);
+        total += reward;
+        if (!x.isPaid) {
+            unpaid += reward;
+        }
+    });
+
+    document.getElementById('totalAmount').innerText = `${total} 円`;
+    document.getElementById('unpaidAmount').innerText = `${unpaid} 円`;
+}
+
+// 未払い分を一括精算
+function markAllAsPaid() {
+    let data = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    let unpaidTotal = 0;
+
+    data.forEach(x => {
+        if (!x.isPaid) {
+            const slots = x.slots || countValidSlots(x.schedule);
+            unpaidTotal += x.reward || (slots * 50);
+        }
+    });
+
+    if (unpaidTotal === 0) {
+        alert('未払いのお小遣いはありません。');
+        return;
+    }
+
+    if (confirm(`未払い分 (${unpaidTotal}円) を精算済みにしますか？`)) {
+        data = data.map(item => ({ ...item, isPaid: true }));
+        localStorage.setItem('johokuStudyData', JSON.stringify(data));
+        loadHistory();
+        alert('精算を完了しました！');
+    }
+}
+
+// 前回データのコピー
+function copyLatest() {
+    const d = JSON.parse(localStorage.getItem('johokuStudyData') || '[]');
+    if (!d.length) {
+        alert('履歴がありません');
+        return;
+    }
+    loadStudy(d[d.length - 1]);
+    document.getElementById('studyDate').value = new Date().toISOString().split('T')[0];
+    alert('前回の入力内容をコピーしました（日付は本日に自動変更されています）。');
+}
+
+// フォームクリア
+function clearForm() {
+    const rows = getRows();
+    rows.forEach(r => {
+        r.querySelector('.subject').value = '';
+        r.querySelector('.memo').value = '';
+    });
+    document.getElementById('studyDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('target').value = '';
+    document.getElementById('summaryContent').innerHTML = '';
+    document.getElementById('summaryView').style.display = 'none';
+}
+
+// 履歴全削除
+function clearHistory() {
+    if (confirm('すべての履歴とお小遣い記録を削除しますか？')) {
+        localStorage.removeItem('johokuStudyData');
+        loadHistory();
+        renderTodoList();
+        clearForm();
+        alert('履歴を削除しました');
+    }
+}
+
+// 一覧表示・プレビュー
+function showSummaryView() {
+    const dateVal = document.getElementById('studyDate').value;
+    const targetVal = document.getElementById('target').value;
+    const d = new Date(dateVal);
+    const week = ["日", "月", "火", "水", "木", "金", "土"];
+    const day = dateVal ? week[d.getDay()] : '';
+
+    let html = `
+    <div style="background:#111; color:white; padding:10px 12px; border-radius:10px; margin-bottom:12px; text-align:center; font-weight:bold;">
+        城北中学 自習記録 ｜ 📅 ${dateVal} (${day}) ｜ 目標: ${targetVal || '未設定'}
+    </div>
+    `;
+
+    const rows = getRows();
+    let hasData = false;
+
+    rows.forEach(r => {
+        const subject = r.querySelector('.subject').value;
+        const memo = r.querySelector('.memo').value;
+        if (!subject && !memo) return;
+
+        hasData = true;
+        const time = r.cells[0].textContent.trim();
+
+        html += `
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #eee;">
+            <div style="width:70px; min-width:70px; font-weight:bold;">${time}</div>
+            <div style="flex:1;">${subject}</div>
+            <div style="font-size:0.85em; color:#d9534f;">${memo ? '❓ ' + memo : ''}</div>
+        </div>
+        `;
+    });
+
+    if (!hasData) {
+        html += `<div style="text-align:center; color:#999; padding:20px;">入力されているメニューがありません</div>`;
+    }
+
+    document.getElementById('summaryContent').innerHTML = html;
+    document.getElementById('summaryView').style.display = 'block';
+    document.getElementById('summaryView').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function printSummaryView() {
+    showSummaryView();
+    setTimeout(() => { window.print(); }, 300);
+}
+
+// LINEコピペ機能
+function copyLineMenu() {
+    const dateVal = document.getElementById('studyDate').value;
+    const targetVal = document.getElementById('target').value;
+    const d = new Date(dateVal);
+    const week = ["日", "月", "火", "水", "木", "金", "土"];
+    const day = dateVal ? week[d.getDay()] : '';
+
+    let text = `【城北中学 本気の自習室】\n📅 日付：${dateVal}（${day}）\n🎯 目標・場所：${targetVal || '未設定'}\n------------------\n`;
+
+    const rows = getRows();
+    let count = 0;
+    let questions = [];
+
+    rows.forEach(r => {
+        const subject = r.querySelector('.subject').value;
+        const memo = r.querySelector('.memo').value;
+
+        if (!subject && !memo) return;
+
+        const time = r.cells[0].textContent.trim();
+        text += `${time}｜${subject}\n`;
+        
+        if (memo) {
+            questions.push(`・${time} 【${subject}】${memo}`);
+        }
+        count++;
+    });
+
+    if (count === 0) {
+        alert("コピーする学習内容が入力されていません。");
+        return;
+    }
+
+    if (questions.length > 0) {
+        text += `\n❓ 本日の疑問・質問事項：\n` + questions.join('\n') + `\n`;
+    }
+
+    text += `------------------\n🪙 獲得報酬：${count * 50}円 (${count}コマ)`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        alert("自習記録をクリップボードにコピーしました！\nLINEにそのまま貼り付けできます。");
+    }).catch(err => {
+        alert("コピーに失敗しました。: " + err);
+    });
+}
+
+// 初期実行
+loadHistory();
+renderTodoList();
+</script>
+
+</body>
+</html>
